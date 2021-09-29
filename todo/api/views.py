@@ -4,6 +4,7 @@ from .serializers import TaskSerializer
 from rest_framework import permissions
 from rest_framework import viewsets
 
+
 class TodoListView(viewsets.ModelViewSet):
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
@@ -21,17 +22,16 @@ class TodoListView(viewsets.ModelViewSet):
             .get_queryset(*args, **kwargs)
             .filter(user=self.request.user)
         )
-    
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
-class TodoDetailApiView(viewsets.ModelViewSet):    
+class TodoDetailApiView(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = "todo_id"
 
-    
     def get_object(self, queryset=None):
         obj = Task.objects.get(pk=self.kwargs["todo_id"])
         return obj

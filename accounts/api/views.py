@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from .serializers import LoginSerializer, RegisterSerializer,EmptySerializer
+from .serializers import LoginSerializer, RegisterSerializer, EmptySerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import status
@@ -9,15 +9,24 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action
 
 # another type of class to use
+
+
 class AuthViewSet(viewsets.GenericViewSet):
-    permission_classes = [AllowAny, ]
+    permission_classes = [
+        AllowAny,
+    ]
     serializer_classe = EmptySerializer
     serializer_classes = {
-        'login': LoginSerializer,
-        'register': RegisterSerializer,
+        "login": LoginSerializer,
+        "register": RegisterSerializer,
     }
 
-    @action(methods=['POST', ], detail=False)
+    @action(
+        methods=[
+            "POST",
+        ],
+        detail=False,
+    )
     def login(self, request):
         serializer = self.get_serializer(data=request.data)
 
@@ -28,7 +37,12 @@ class AuthViewSet(viewsets.GenericViewSet):
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=['POST', ], detail=False)
+    @action(
+        methods=[
+            "POST",
+        ],
+        detail=False,
+    )
     def register(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
@@ -42,19 +56,27 @@ class AuthViewSet(viewsets.GenericViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(methods=['GET', ], detail=False)
+    @action(
+        methods=[
+            "GET",
+        ],
+        detail=False,
+    )
     def logout(self, request):
         logout(request)
-        data = {'success': 'Sucessfully logged out'}
+        data = {"success": "Sucessfully logged out"}
         return Response(data=data, status=status.HTTP_200_OK)
-    
+
     def get_serializer_class(self):
         if not isinstance(self.serializer_classes, dict):
-            raise ImproperlyConfigured("serializer_classes should be a dict mapping.")
+            raise ImproperlyConfigured(
+                "serializer_classes should be a dict mapping."
+            )
 
         if self.action in self.serializer_classes.keys():
             return self.serializer_classes[self.action]
         return super().get_serializer_class()
+
 
 class LogoutViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
@@ -97,4 +119,3 @@ class LoginViewSet(viewsets.ViewSet):
             login(request, user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-

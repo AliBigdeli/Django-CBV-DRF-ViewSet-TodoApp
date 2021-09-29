@@ -65,5 +65,6 @@ class RegisterSerializer(serializers.Serializer):
 
         return data
 
+
 class EmptySerializer(serializers.Serializer):
     pass
