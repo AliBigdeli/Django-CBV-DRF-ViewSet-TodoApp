@@ -115,7 +115,7 @@ class LoginViewSet(viewsets.ViewSet):
 
         if serializer.is_valid():
             user = serializer.validated_data.get("user")
-        if user is not None and user.is_active:
-            login(request, user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            if user is not None and user.is_active:
+                login(request, user)
+                return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
